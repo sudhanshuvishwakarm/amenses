@@ -1,5 +1,5 @@
 'use client'
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import React, { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 import axios from 'axios';
@@ -7,20 +7,29 @@ import Loading from '../../../components/Loading.jsx';
 
 export default function VerifyOTP() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const email = searchParams.get('email');
+  const [email, setEmail] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [loading, setLoading] = useState(false);
   const [resendDisabled, setResendDisabled] = useState(true);
   const [countdown, setCountdown] = useState(30);
+  const [isClient, setIsClient] = useState(false);
   const inputRefs = useRef([]);
 
   useEffect(() => {
-    if (!email) {
-      toast.error('Email not found. Please sign up again.');
-      router.push('/auth/signup');
+    setIsClient(true);
+    
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const emailParam = urlParams.get('email');
+      
+      if (emailParam) {
+        setEmail(emailParam);
+      } else {
+        toast.error('Email not found. Please sign up again.');
+        router.push('/auth/signup');
+      }
     }
-  }, [email, router]);
+  }, [router]);
 
   useEffect(() => {
     let timer;
@@ -33,13 +42,12 @@ export default function VerifyOTP() {
   }, [countdown, resendDisabled]);
 
   const handleChange = (index, value) => {
-    if (!/^\d*$/.test(value)) return; // Only allow numbers
+    if (!/^\d*$/.test(value)) return; 
     
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
 
-    // Auto-focus to next input
     if (value && index < 5) {
       inputRefs.current[index + 1].focus();
     }
@@ -71,6 +79,11 @@ export default function VerifyOTP() {
       return;
     }
 
+    if (!email) {
+      toast.error('Email not found. Please try again.');
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await axios.post('/api/users/verify-otp', {
@@ -89,6 +102,11 @@ export default function VerifyOTP() {
   };
 
   const handleResendOTP = async () => {
+    if (!email) {
+      toast.error('Email not found. Please try again.');
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await axios.post('/api/users/resend-otp', { email });
@@ -102,6 +120,17 @@ export default function VerifyOTP() {
       setLoading(false);
     }
   };
+
+  if (!isClient) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen">
@@ -121,7 +150,7 @@ export default function VerifyOTP() {
                 Verify Your Email
               </h1>
               <p className="mt-2 text-sm text-gray-600">
-                We've sent a verification code to {email}
+                {email ? `We've sent a verification code to ${email}` : 'Loading...'}
               </p>
             </div>
 
@@ -147,11 +176,12 @@ export default function VerifyOTP() {
               <div>
                 <button
                   type="submit"
+                  disabled={loading || !email}
                   className="group relative flex w-full justify-center rounded-md border border-transparent 
                   bg-indigo-600 hover:bg-indigo-700 cursor-pointer py-2 px-4 text-sm font-medium text-white 
-                  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Verify Account
+                  {loading ? 'Verifying...' : 'Verify Account'}
                 </button>
               </div>
             </form>
@@ -161,8 +191,8 @@ export default function VerifyOTP() {
                 Didn't receive the code?{' '}
                 <button
                   onClick={handleResendOTP}
-                  disabled={resendDisabled}
-                  className={`font-medium ${resendDisabled ? 'text-gray-400' : 'text-indigo-600 hover:underline hover:text-indigo-500'} cursor-pointer`}
+                  disabled={resendDisabled || !email}
+                  className={`font-medium ${resendDisabled || !email ? 'text-gray-400' : 'text-indigo-600 hover:underline hover:text-indigo-500'} cursor-pointer disabled:cursor-not-allowed`}
                 >
                   {resendDisabled ? `Resend in ${countdown}s` : 'Resend OTP'}
                 </button>

@@ -1,4 +1,3 @@
-// models/DateOption.js
 import mongoose from "mongoose";
 
 const dateOptionSchema = new mongoose.Schema({

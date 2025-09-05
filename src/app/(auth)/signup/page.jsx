@@ -15,7 +15,6 @@ export default function Signup() {
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
 
- // In your signup component, replace the success handler:
 const onSignup = async (e) => {
   e.preventDefault()
   setLoading(true)
@@ -43,7 +42,6 @@ const onSignup = async (e) => {
   }, [user])
   return (
     <div className="flex min-h-screen">
-      {/* Auth form section - now properly scrollable with fixed positioning */}
       <div className="w-full  h-screen overflow-y-auto py-12">
         <div className="min-h-full flex items-center justify-center px-4 sm:px-6 lg:px-8">
           <div className="w-full max-w-md space-y-8 py-0">

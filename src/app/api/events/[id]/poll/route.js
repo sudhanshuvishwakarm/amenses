@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "../../../../../dbConfig/dbconnection.js";
-// import getDataFromToken from "../../../../../utils/getDataFromToken.js";
 import Event from "../../../../../models/Event.js";
 
 connectDB();

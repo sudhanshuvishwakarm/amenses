@@ -18,7 +18,6 @@ export async function GET(request, { params }) {
       );
     }
 
-    // Find the event by ID
     const event = await Event.findById(id)
       .populate('creator', 'username email');
 
@@ -29,10 +28,8 @@ export async function GET(request, { params }) {
       );
     }
 
-    // Check if current user is the creator
     const isCreator = event.creator._id.toString() === userId;
 
-    // Format the response data
     const responseData = {
       _id: event._id,
       title: event.title,
@@ -84,7 +81,6 @@ export async function PUT(request, { params }) {
 
     const { title, description, dateOptions, participants, pollQuestion } = await request.json();
 
-    // Validation
     if (!title || !description) {
       return NextResponse.json(
         { error: 'Title and description are required' },
@@ -99,7 +95,6 @@ export async function PUT(request, { params }) {
       );
     }
 
-    // Find the event and verify ownership
     const event = await Event.findById(id);
     if (!event) {
       return NextResponse.json(
@@ -115,7 +110,6 @@ export async function PUT(request, { params }) {
       );
     }
 
-    // Get the creator's user data
     const creatorUser = await User.findById(userId).select('email');
     if (!creatorUser) {
       return NextResponse.json(
@@ -124,18 +118,15 @@ export async function PUT(request, { params }) {
       );
     }
 
-    // Update the event
     event.title = title;
     event.description = description;
     event.pollQuestion = pollQuestion || 'Choose a suitable date';
     
-    // Update date options
     event.dateOptions = dateOptions.map(dateString => ({
       date: new Date(dateString),
-      voters: [] // Reset voters when dates change
+      voters: [] 
     }));
     
-    // Update participants (keep creator as accepted, others as pending)
     event.participants = [
       { email: creatorUser.email, status: 'accepted' },
       ...(participants || []).map(email => ({ 
@@ -146,7 +137,6 @@ export async function PUT(request, { params }) {
 
     const savedEvent = await event.save();
     
-    // Populate the event with creator data for response
     const populatedEvent = await Event.findById(savedEvent._id)
       .populate('creator', 'username email');
 

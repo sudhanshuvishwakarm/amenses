@@ -31,12 +31,10 @@ export async function POST(request, { params }) {
       return NextResponse.json({ error: 'Event not found' }, { status: 404 });
     }
 
-    // Remove user's vote from all options first
     event.dateOptions.forEach(option => {
       option.voters = option.voters.filter(voter => voter.toString() !== userId);
     });
 
-    // Add vote to selected option
     const selectedOption = event.dateOptions.id(dateOptionId);
     if (selectedOption) {
       selectedOption.voters.push(userId);
@@ -81,7 +79,6 @@ export async function GET(request, { params }) {
     let selectedOption = null;
     let hasVoted = false;
 
-    // Check if user has voted on any option
     for (const option of event.dateOptions) {
       if (option.voters.some(voter => voter.toString() === userId)) {
         selectedOption = option._id.toString();
@@ -120,7 +117,6 @@ export async function DELETE(request, { params }) {
       return NextResponse.json({ error: 'Event not found' }, { status: 404 });
     }
 
-    // Remove user's vote from all options
     let voteRemoved = false;
     event.dateOptions.forEach(option => {
       const initialLength = option.voters.length;

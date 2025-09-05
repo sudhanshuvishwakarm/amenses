@@ -28,7 +28,6 @@ export default function DashboardPage() {
       setLoading(true)
       setError(null)
       
-      // Fetch events from your existing API endpoint
       const response = await axios.get('/api/events')
       
       if (response.data.success) {
@@ -46,9 +45,7 @@ export default function DashboardPage() {
     }
   }
 
-  // Calculate pending invites - check if current user has pending status in any event
   const pendingInvites = invitedEvents.filter(event => {
-    // Get current user's email from localStorage or wherever you store it
     const userEmail = localStorage.getItem('userEmail') || '';
     return event.participants?.some(participant => 
       participant.email === userEmail && participant.status === 'pending'
@@ -263,140 +260,5 @@ export default function DashboardPage() {
       <Footer />
     </main>
   )
-}// "use client"
 
-// import Header from "../../components/Header.jsx"
-// import Footer from "../../components/Footer.jsx"
-// import EventCard from "../../components/event-card.jsx"
-// import NotificationList from "../../components/notification-list.jsx"
-// import Loading from "../../components/Loading.jsx"
-// import { useState, useEffect } from "react"
-// import axios from "axios"
-// import { toast } from "react-toastify"
-// import { ToastContainer } from "react-toastify"
-// import 'react-toastify/dist/ReactToastify.css'
-
-// export default function DashboardPage() {
-//   const [myEvents, setMyEvents] = useState([])
-//   const [invitedEvents, setInvitedEvents] = useState([])
-//   const [loading, setLoading] = useState(true)
-//   const [error, setError] = useState(null)
-
-//   useEffect(() => {
-//     fetchEvents()
-//   }, [])
-
-//   const fetchEvents = async () => {
-//     try {
-//       setLoading(true)
-//       setError(null)
-      
-//       // Fetch events from your existing API endpoint
-//       const response = await axios.get('/api/events')
-      
-//       if (response.data.success) {
-//         setMyEvents(response.data.data.createdEvents || [])
-//         setInvitedEvents(response.data.data.invitedEvents || [])
-//       } else {
-//         throw new Error(response.data.error || "Failed to fetch events")
-//       }
-//     } catch (err) {
-//       console.error("Failed to fetch events:", err)
-//       setError("Failed to load events. Please try again later.")
-//       toast.error("Failed to load events. Please try again later.")
-//     } finally {
-//       setLoading(false)
-//     }
-//   }
-
-//   // Calculate pending invites - check if current user has pending status in any event
-//   const pendingInvites = invitedEvents.filter(event => {
-//     // Get current user's email from localStorage or wherever you store it
-//     const userEmail = localStorage.getItem('userEmail') || '';
-//     return event.participants?.some(participant => 
-//       participant.email === userEmail && participant.status === 'pending'
-//     );
-//   });
-
-//   if (loading) {
-//     return (
-//       <main className="min-h-dvh flex flex-col bg-white">
-//         <Header pendingCount={0} />
-//         <Loading />
-//         <Footer />
-//       </main>
-//     )
-//   }
-
-//   return (
-//     <main className="min-h-dvh flex flex-col bg-white">
-//       <Header pendingCount={pendingInvites.length} />
-//       <ToastContainer
-//         position="top-right"
-//         autoClose={3000}
-//         hideProgressBar={false}
-//         newestOnTop={false}
-//         closeOnClick
-//         rtl={false}
-//         pauseOnFocusLoss
-//         draggable
-//         pauseOnHover
-//         theme="light"
-//       />
-      
-//       <section className="flex-1">
-//         <div className="mx-auto w-full max-w-6xl px-4 py-6">
-//           <div className="flex items-center justify-between">
-//             <h1 className="text-lg md:text-xl font-medium text-gray-900">Dashboard</h1>
-//             <NotificationList items={pendingInvites} />
-//           </div>
-
-//           {error && (
-//             <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-md">
-//               <p className="text-red-700">{error}</p>
-//               <button 
-//                 onClick={fetchEvents}
-//                 className="mt-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition"
-//               >
-//                 Try Again
-//               </button>
-//             </div>
-//           )}
-
-//           <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-//             <div>
-//               <h2 className="text-base md:text-lg font-medium text-gray-900">My Events</h2>
-//               <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-//                 {myEvents.length ? (
-//                   myEvents.map((event) => <EventCard key={event._id} event={event} />)
-//                 ) : (
-//                   <div className="col-span-2 py-8 text-center">
-//                     <p className="text-sm text-gray-600">No events created yet.</p>
-//                     <a 
-//                       href="/events/create" 
-//                       className="mt-2 inline-block text-blue-600 hover:text-blue-800"
-//                     >
-//                       Create your first event
-//                     </a>
-//                   </div>
-//                 )}
-//               </div>
-//             </div>
-            
-//             <div>
-//               <h2 className="text-base md:text-lg font-medium text-gray-900">Invited Events</h2>
-//               <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-//                 {invitedEvents.length ? (
-//                   invitedEvents.map((event) => <EventCard key={event._id} event={event} />)
-//                 ) : (
-//                   <p className="text-sm text-gray-600">No invitations yet.</p>
-//                 )}
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </section>
-//       <Footer />
-//     </main>
-//   )
-// }
+}

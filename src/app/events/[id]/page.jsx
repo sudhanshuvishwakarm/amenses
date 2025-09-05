@@ -18,10 +18,8 @@ export default function EventDetailPage({ params }) {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    // Extract id from params when it's available
     const extractId = async () => {
       try {
-        // params is a Promise, so we need to await it
         const resolvedParams = await params
         setId(resolvedParams.id)
       } catch (err) {
@@ -69,7 +67,6 @@ export default function EventDetailPage({ params }) {
       
       if (response.data.success) {
         toast.success("Event deleted successfully!")
-        // Redirect to dashboard after successful deletion
         window.location.href = "/dashboard"
       } else {
         throw new Error(response.data.error || "Failed to delete event")

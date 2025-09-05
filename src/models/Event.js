@@ -1,4 +1,3 @@
-// models/Event.js
 import mongoose from "mongoose";
 
 const eventSchema = new mongoose.Schema({
@@ -25,7 +24,7 @@ const eventSchema = new mongoose.Schema({
       required: true
     },
     voters: [{
-      type: String, // Store emails instead of ObjectId
+      type: String, 
       trim: true,
       lowercase: true
     }]
