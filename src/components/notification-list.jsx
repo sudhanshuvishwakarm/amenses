@@ -1,60 +1,53 @@
+// components/notification-list.jsx
 "use client"
 
-import { Check, X } from "lucide-react"
 import { useState } from "react"
+import { Bell } from "lucide-react"
 
-export default function NotificationList({ items = [] }) {
-  const [open, setOpen] = useState(false)
-  const [localItems, setLocalItems] = useState(items)
+export default function NotificationList({ items }) {
+  const [isOpen, setIsOpen] = useState(false)
 
-  async function onRespond(id, accept) {
-    try {
-      setLocalItems((prev) => prev.filter((i) => i.id !== id))
-    } catch (e) {
-      // handle error UI if needed
-    }
+  if (!items || items.length === 0) {
+    return null
   }
 
   return (
     <div className="relative">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        className="inline-flex items-center rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-50"
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className="relative p-2 text-gray-600 hover:text-gray-900"
       >
-        Invitations ({localItems.length})
+        <Bell className="h-5 w-5" />
+        {items.length > 0 && (
+          <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+            {items.length}
+          </span>
+        )}
       </button>
-      {open ? (
-        <div className="absolute right-0 z-10 mt-2 w-80 rounded-md border border-gray-200 bg-white p-2 shadow">
-          {localItems.length ? (
-            <ul className="space-y-2">
-              {localItems.map((inv) => (
-                <li key={inv.id} className="rounded border border-gray-200 p-2">
-                  <p className="text-sm font-medium text-gray-900">{inv.title}</p>
-                  <div className="mt-2 flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => onRespond(inv.id, true)}
-                      className="inline-flex items-center gap-1 rounded-md bg-blue-600 px-2 py-1 text-xs font-medium text-white hover:bg-blue-700"
-                    >
-                      <Check className="h-3 w-3" /> Accept
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => onRespond(inv.id, false)}
-                      className="inline-flex items-center gap-1 rounded-md border border-gray-300 px-2 py-1 text-xs font-medium text-gray-900 hover:bg-gray-50"
-                    >
-                      <X className="h-3 w-3" /> Decline
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="px-2 py-1 text-sm text-gray-600">No pending invitations.</p>
-          )}
+
+      {isOpen && (
+        <div className="absolute right-0 mt-2 w-64 rounded-md bg-white shadow-lg border border-gray-200 z-10">
+          <div className="p-3 border-b border-gray-200">
+            <h3 className="text-sm font-medium">Pending Invitations</h3>
+          </div>
+          <div className="max-h-60 overflow-y-auto">
+            {items.map((event) => (
+              <div key={event._id} className="p-3 border-b border-gray-100 last:border-b-0">
+                <p className="text-sm font-medium text-gray-900">{event.title}</p>
+                <p className="text-xs text-gray-600 mt-1">
+                  From: {event.creator?.username || event.creator?.email || 'Unknown'}
+                </p>
+                <a 
+                  href={`/events/${event._id}`}
+                  className="mt-2 inline-block text-xs text-blue-600 hover:text-blue-800"
+                >
+                  Respond to invitation
+                </a>
+              </div>
+            ))}
+          </div>
         </div>
-      ) : null}
+      )}
     </div>
   )
 }

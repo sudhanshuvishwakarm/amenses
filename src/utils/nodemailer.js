@@ -15,7 +15,7 @@ export const sendEmail = async (email, otp, username) => {
         });
 
         const mailOptions = {
-            from: `"Ecommerce" <${process.env.EMAIL_USER}>`,
+            from: `"AMENSES INNOVATION" <${process.env.EMAIL_USER}>`,
             to: email,
             subject: "Your OTP Code",
             html: `
@@ -26,7 +26,7 @@ export const sendEmail = async (email, otp, username) => {
           <h1 style="color: #4CAF50;">${otp}</h1>
           <p>This code will expire in <b>3 hours</b>. Do not share it with anyone.</p>
           <br/>
-          <p>Best regards,<br/>Ecommerce Team</p>
+          <p>Best regards,<br/>AMENSES TEAM</p>
         </div>
       `,
         };

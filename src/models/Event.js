@@ -20,13 +20,22 @@ const eventSchema = new mongoose.Schema({
     required: true
   },
   dateOptions: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "DateOption"
+    date: {
+      type: Date,
+      required: true
+    },
+    voters: [{
+      type: String, // Store emails instead of ObjectId
+      trim: true,
+      lowercase: true
+    }]
   }],
   participants: [{
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User"
+    email: {
+      type: String,
+      required: true,
+      lowercase: true,
+      trim: true
     },
     status: {
       type: String,
@@ -46,6 +55,12 @@ const eventSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   }
+});
+
+// Update the updatedAt field before saving
+eventSchema.pre('save', function(next) {
+  this.updatedAt = Date.now();
+  next();
 });
 
 const Event = mongoose.models.Event || mongoose.model("Event", eventSchema);

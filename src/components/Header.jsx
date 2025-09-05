@@ -126,13 +126,6 @@ export default function Header() {
           {me && (
             <>
             <a
-              href="/events"
-              className="hidden md:block text-md text-black hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
-              aria-label="events"
-            >
-              events
-            </a>
-            <a
               href="/events/create"
               className="hidden md:block text-md text-black hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
               aria-label="events"
@@ -178,7 +171,7 @@ export default function Header() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-900 truncate">
-                          {me?.user?.username || 'User'}
+                          {me?.user?.username.toUpperCase() || 'User'}
                         </p>
                         <p className="text-xs text-gray-500 truncate">
                           {me?.user?.email || 'No email provided'}
